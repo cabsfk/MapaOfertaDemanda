@@ -1,0 +1,172 @@
+﻿
+<div id="map"></div>
+<div id="info-pane" class="leaflet-bar"></div>
+<div id="BtnMonstrarConven">
+    <button type="button" class="btn btn-primary btn-sm" id="MostrarConvenciones">
+        <span class="glyphicon glyphicon-align-left" aria-hidden="true"></span> <small id="textlegend">Ocultar</small>
+</button>
+</div>
+
+<div class="panel" id="linea_tiempo">
+    <div class="btn-group" id="anios">
+       
+    </div>
+</div>
+<div class="col-sm-2 col-md-2" id="panel_formulario" style="max-width:350px;min-width:300px;">
+    <div class="panel panel-primary">
+        <div class="panel-heading">
+            <h3 class="panel-title">Opciones.</h3>
+        </div>
+        <div class="panel-body">
+            <div>
+
+                <!-- Nav tabs -->
+                <ul class="nav nav-tabs" role="tablist">
+                    <li role="presentation" class="active">
+                        <a href="#Filtro" aria-controls="Filtro" role="tab" data-toggle="tab">
+                            <span class="glyphicon glyphicon-filter  text-primary" data-toggle="tooltip" id="FiltroColor" data-placement="top" title="" data-original-title="Filtros"></span>
+                        </a>
+                    </li>
+                    <li role="presentation">
+                        <a href="#TabGrfDemanda" aria-controls="TabGrfDemanda" role="tab" data-toggle="tab">
+                            <span class="glyphicon glyphicon-tasks" data-toggle="tooltip" id="TabGrfDemandaColor" data-placement="top" title="" data-original-title="Grafica Demanda"></span>
+                        </a>
+                    </li>
+                    <li role="presentation">
+                        <a href="#Busqueda" aria-controls="Busqueda" role="tab" data-toggle="tab">
+                            <span class="glyphicon glyphicon-search" data-toggle="tooltip" id="BusquedaColor" data-placement="top" title="" data-original-title="Busqueda"></span>
+                        </a>
+                    </li>
+
+                </ul>
+                <!-- Tab panes -->
+                <div class="tab-content">
+                    <div role="tabpanel" class="tab-pane active" id="Filtro">
+                        <div class="form-group">
+                            <label>Mineral: </label>
+                            <select class="form-control" id="selecMineral"></select>
+                        </div>
+                        <div class="form-group">
+                            <label>Restricciones Oferta: </label><br>
+                            <select class="form-control" id="SelctRestricciones" multiple="multiple">
+                                <option value="TITULO_MINERIO">TITULOS MINERIOS</option>
+                                <option value="RESTRICCION_AMBIENTAL">AMBIENTALES</option>
+                                <option value="RESTRICCION_SOCIAL">SOCIALES</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label>Escala: </label>
+                            <select class="form-control" id="selecEscala">
+                                <option value="Departamento">Departamento</option>
+                                <option value="Municipio">Municipio</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div role="tabpanel" class="tab-pane" id="TabGrfDemanda">
+                        <div id="GraficaDemanda" style="width: 270px; height: 300px; overflow-y: scroll; overflow-x:hidden "></div>
+                    </div>
+                    <div role="tabpanel" class="tab-pane" id="Busqueda">
+                        <br>
+                        <form style="text-align: center;">
+                            <h5>Ingrese el nombre del municipio de interes</h5>
+                            <div class="input-group custom-search-form">
+                                <input type="text" class="form-control" id="city" placeholder="Nombre Municipio">
+                                <span class="input-group-btn">
+                                    <button class="btn btn-default" type="button" id="BtnBusquedaMun" disabled>
+                                        <span class="glyphicon glyphicon-search"></span>
+                                    </button>
+                                </span>
+                                <span class="input-group-btn">
+                                    <button class="btn btn-primary" type="button" id="BtnLimpiarMun">
+                                        <span class="glyphicon glyphicon-trash"></span>
+                                    </button>
+                                </span>
+                            </div><!-- /input-group -->
+                        </form>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+        <div class="panel-footer">
+        </div>
+    </div>
+</div>
+
+<div class="col-sm-2 col-md-2" id="panel_superDerecho" style="max-width:400px;min-width:360px;">
+    <div class="panel panel-primary" >
+        <div class="panel-body">
+            <div class="pull-right">
+                <button type="button" class="btn btn-primary btn-xs" id="closePanelDem">
+                    <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                </button>
+            </div>
+            <ul class="nav nav-tabs" role="tablist">
+                <li role="presentation" class="active"><a href="#BarDemanda"  role="tab" data-toggle="tab">Demanda Proyectada</a></li>
+            </ul>
+            <div class="tab-content">
+                <div role="tabpanel" class="tab-pane active" id="BarDemanda">
+                    <center>
+                        <div id="containerDemanda" style="min-width: 250px; height: 300px; margin: 0 auto"></div>
+                    </center>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div id="carousel-panel-generic" style="width:230px">
+            <div id="myCarousel" class="carousel slide">
+                <ol class="carousel-indicators">
+                    <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+                    <li data-target="#myCarousel" data-slide-to="1"></li>
+                </ol>
+                <!-- Carousel items -->
+                <div class="carousel-inner">
+                    <div class="item active">
+                        <div class="row-fluid">
+                            <div class="col-sm-6 col-md-6" id="BaseESRIStreets" value="Streets">
+                                <a href="#" class="thumbnail">
+                                    <img src="~/images/baselayers/calles.PNG" style="max-width:100%;">
+                                    <div class="carousel-caption"><center><h6>ESRI Streets</h6></center></div>
+                                </a>
+                            </div>
+                            <div class="col-sm-6 col-md-6" id="BaseESRISatellite" value="Imagery">
+                                <a href="#" class="thumbnail">
+                                    <img src="~/images/baselayers/satelite.PNG" style="max-width:100%;">
+                                    <div class="carousel-caption"><center><h6 style="color:rgba(255, 255, 255,1)">ESRI Satelite</h6></center></div>
+                                </a>
+                            </div>
+                        </div><!--/row-fluid-->
+                    </div><!--/item-->
+                    <div class="item">
+                        <div class="row-fluid">
+                            <div class="col-sm-6 col-md-6" id="BaseESRITopo" value="Topographic">
+                                <a href="#" class="thumbnail">
+                                    <img src="~/images/baselayers/topografic.PNG" style="max-width:100%;">
+                                    <div class="carousel-caption"><center><h6>ESRI Topographic</h6></center></div>
+                                </a>
+                            </div>
+                            <div class="col-sm-6 col-md-6" id="BaseOSM" value="OSM">
+                                <a href="#" class="thumbnail">
+                                    <img src="~/images/baselayers/OSM.PNG" style="max-width:100%;">
+                                    <div class="carousel-caption"><center><h6>OSM</h6></center></div>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <a class="left carousel-control" href="#myCarousel" role="button" data-slide="prev">
+                    <span class="glyphicon glyphicon-chevron-left"></span>
+                </a>
+                <a class="right carousel-control" href="#myCarousel" role="button" data-slide="next">
+                    <span class="glyphicon glyphicon-chevron-right"></span>
+                </a>
+    </div><!--/myCarousel-->
+</div>
+<div class='mouse-position'>
+    <b id='mousemove'><b />
+</div>
+@Scripts.Render("~/bundles/appMapGlobal")
+@Scripts.Render("~/bundles/appMap")
