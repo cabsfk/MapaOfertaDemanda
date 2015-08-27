@@ -366,7 +366,7 @@ $(function () {
             else {
                 var labels = [];
                 options.each(function () {
-                    console.log($(this).attr('value'));
+                    //console.log($(this).attr('value'));
                     glo.ArrayRestric.push($(this).attr('value'));
                     if ($(this).attr('label') !== undefined) {
                         labels.push($(this).attr('label'));

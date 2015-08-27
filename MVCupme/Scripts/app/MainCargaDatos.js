@@ -152,7 +152,7 @@ function CargaOfertaDemanda() {
             
 
             glo.Materiales = arrayMi.unique();
-            console.log(glo.Materiales);
+            //console.log(glo.Materiales);
             var tmpUniMate = glo.textMineral[glo.Materiales[0]].split('[');
             tmpUniMate = tmpUniMate[1].split(']');
             glo.UniMate = tmpUniMate[0];
@@ -163,8 +163,8 @@ function CargaOfertaDemanda() {
             for (i = 1; i < glo.Materiales.length; i++) {
                 $("#selecMineral").append('<option value="' + glo.Materiales[i] + '" >' + glo.textMineral[glo.Materiales[i]] + '</option>');
             }
-            console.log('Materiales' );
-            console.log(glo.Materiales[0]);
+            //console.log('Materiales' );
+            //console.log(glo.Materiales[0]);
             glo.ArrayOfertas = fCOferta;
             var queryOfertaMun = L.esri.Tasks.query({
                 url: config.dominio + config.urlHostDataMA + 'MapServer/' + config.EP_OFERTA_MUN

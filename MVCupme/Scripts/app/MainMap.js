@@ -206,54 +206,57 @@ function clickToFeature(e) {
 }
 
 function graficarDemandaMun(nomGraficaDemanda, dataGraficaDemanda, dataGraficaProduccion) {
-    $('#GraficaDemanda').highcharts({
-        chart: {
-            type: 'bar'
-        },
-        title: {
-            text: 'Demanda'
-        },
-        subtitle: {
-            text: ''
-        },
-        xAxis: {
-            categories: nomGraficaDemanda,
-            title: {
-                text: null
-            }
-        },
-        yAxis: {
-            min: 0,
-            title: {
-                text: 'Cantidad',
-                align: 'high'
+    $('#GraficaDemanda').empty();
+    if (glo.Anio != 0) {
+        $('#GraficaDemanda').highcharts({
+            chart: {
+                type: 'bar'
             },
-            labels: {
-                overflow: 'justify'
-            }
-        },
-        /*tooltip: {
-            valueSuffix: ' millions'
-        },*/
-        plotOptions: {
-            bar: {
-                dataLabels: {
-                    enabled: false
+            title: {
+                text: 'Demanda'
+            },
+            subtitle: {
+                text: ''
+            },
+            xAxis: {
+                categories: nomGraficaDemanda,
+                title: {
+                    text: null
                 }
+            },
+            yAxis: {
+                min: 0,
+                title: {
+                    text: 'Cantidad',
+                    align: 'high'
+                },
+                labels: {
+                    overflow: 'justify'
+                }
+            },
+            /*tooltip: {
+                valueSuffix: ' millions'
+            },*/
+            plotOptions: {
+                bar: {
+                    dataLabels: {
+                        enabled: false
+                    }
+                }
+            },
+            credits: {
+                enabled: false
+            },
+            series: [{
+                name: 'Demanda',
+                data: dataGraficaDemanda
+            }, {
+                name: 'Produccion',
+                data: dataGraficaProduccion
             }
-        },
-        credits: {
-            enabled: false
-        },
-        series: [{
-            name: 'Demanda',
-            data: dataGraficaDemanda
-        }, {
-            name: 'Produccion',
-            data:dataGraficaProduccion
-        }
-        ]
-    });
+            ]
+        });
+    }
 };
 
 function addCentroid(Arraycentroid) {
@@ -357,8 +360,8 @@ function getIDMunDpt(filterOferta) {
     
     var UniIdMun = idMun.unique();
     var UniIdDeto = idDepto.unique();
-    console.log(UniIdMun);
-    console.log(UniIdDeto);
+    //console.log(UniIdMun);
+    //console.log(UniIdDeto);
     idMunDpto = [UniIdDeto,UniIdMun];
     return idMunDpto;
 }
@@ -376,7 +379,7 @@ function getJsonMunFil(idMun) {
 
 function calEstadisticasMun(polygons, points, vec,filtro) {
     var arraymun = [];
-    console.log(points);
+    //console.log(points);
     $.each(vec, function (index, value) {
         var filterOferta = turf.filter(points, filtro[0], value);
         //if (value == '66') { console.log(filterOferta);}
@@ -391,10 +394,10 @@ function calEstadisticasMun(polygons, points, vec,filtro) {
     });
     
     var fc = turf.featurecollection(arraymun);
-    console.log(fc);
+    //console.log(fc);
     var removeAggregated = turf.remove(fc, 'ProAct_sum', 0);
-    console.log('removeAggregated');
-    console.log(removeAggregated);
+    //console.log('removeAggregated');
+    //console.log(removeAggregated);
     if (removeAggregated.features.length > 0) {
         //console.log(removeAggregated);
         if (removeAggregated.features.length > 5) {
@@ -403,8 +406,8 @@ function calEstadisticasMun(polygons, points, vec,filtro) {
             glo.breaks = turf.jenks(removeAggregated, 'ProAct_sum', removeAggregated.features.length - 1);
         }
         glo.breaks = glo.breaks.unique();
-        console.log(' glo.breaks');
-        console.log(glo.breaks);
+        /*console.log(' glo.breaks');
+        console.log(glo.breaks);*/
         if (glo.breaks != null) {
             if (glo.breaks[0] != 0) {
                 glo.breaks.unshift(0);
