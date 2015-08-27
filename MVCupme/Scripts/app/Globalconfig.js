@@ -325,6 +325,7 @@ query_Estudio.where("1='1'").returnGeometry(false).run(function (error, featureC
         data[value.properties.ID_ESTUDIO] = value.properties.NOMBRE + ' ( ' + value.properties.ANIO + ' ) ';
         $("#selecEstudio").append('<option value="' + value.properties.ID_ESTUDIO + '" >' + value.properties.ID_ESTUDIO + '. ' + value.properties.NOMBRE.substring(0, 150) + '... ( ' + value.properties.ANIO + ' ) ' + '</option>');
     });
+    $("#selecEstudio").val((featureCollection.features.length));
     glo.listEstudio = data;
 });
 
