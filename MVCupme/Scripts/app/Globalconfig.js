@@ -73,6 +73,7 @@ var glo = {
               }
           }]
     },
+    addlegend:false,
     aggregations:[
           {
               aggregation: 'sum',
@@ -149,7 +150,7 @@ legend.onAdd = function (map) {
     var div = L.DomUtil.create('div', 'info legend');
        
     div.innerHTML +=
-        '<svg height="140" width="160" id="LegendDemanda">' +
+        '<div id="LegendDemanda"><svg height="140" width="160" >' +
         '<rect x="1" y="1" width="160" height="140" fill="rgba(220,220,220,0.3)" />'+
         '<text x="45" y="15" fill="black"  font-weight = "bold">Demanda</text>'+
             '<rect x="40" y="26"  width="15" height="15" style="fill:red" />'+
@@ -162,12 +163,12 @@ legend.onAdd = function (map) {
             '<circle cx="115" cy="90" r="20" stroke="white" stroke-width="3" fill="rgb(220,220,220)" />'+
             '<text x="0" y="130" fill="black" id="valuemin">1</text>'+
             '<text x="68" y="130" fill="black" id="valuemax"></text>'+
-            '</svg>';
+            '</svg><hr></div>';
 
      labels = [];
 
     // loop through our density intervals and generate a label with a colored square for each interval
-     div.innerHTML += '<hr><div id="LegendOferta"><center><b>Oferta <span id="UniOferta"></span></b></center>';
+     div.innerHTML += '<div id="LegendOferta"><center><b>Oferta <span id="UniOferta"></span></b></center>';
 
      for (var i = 0; i < glo.breaks.length; i++) {
          if (i == 0) {
@@ -319,8 +320,10 @@ var query_Estudio = L.esri.Tasks.query({
 
 query_Estudio.where("1='1'").returnGeometry(false).run(function (error, featureCollection) {
     var data = [];
+   // $("#selecEstudio").append('<option value="" > </option>');
     $.each(featureCollection.features.reverse(), function (index, value) {
-        data[value.properties.ID_ESTUDIO] = value.properties.NOMBRE + ' ( ' + value.properties.ANIO+' ) ';
+        data[value.properties.ID_ESTUDIO] = value.properties.NOMBRE + ' ( ' + value.properties.ANIO + ' ) ';
+        $("#selecEstudio").append('<option value="' + value.properties.ID_ESTUDIO + '" >' + value.properties.ID_ESTUDIO + '. ' + value.properties.NOMBRE.substring(0, 150) + '... ( ' + value.properties.ANIO + ' ) ' + '</option>');
     });
     glo.listEstudio = data;
 });

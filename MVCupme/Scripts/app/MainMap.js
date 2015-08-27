@@ -30,6 +30,13 @@ $("#selecEscala").change(function () {
     getParametroFilter();    
 });
 
+$("#selecEstudio").change(function () {
+    if (glo.addlegend == true) {
+        legend.removeFrom(map);
+    }
+    glo.Anio = 0;
+    CargaOfertaDemanda();
+});
 
 function calRadio(Arraycentroid) {
     //console.log(glo.DEMANDA_ANIO);
@@ -342,11 +349,14 @@ function styleMun(feature) {
 };
 function getIDMun(filterOferta) {
     var idMun = [];
+    //console.log(filterOferta);
     $.each(filterOferta.features, function (index, value) {
         idMun.push(value.properties.ID_DEPARTAMENTO + value.properties.ID_MUNICIPIO);
+        value.properties.DPTOMUN = value.properties.ID_DEPARTAMENTO + value.properties.ID_MUNICIPIO;
     });
     
-    var UniIdMun=idMun.unique();
+    var UniIdMun = idMun.unique();
+    //console.log(filterOferta);
     return UniIdMun;
 }
 
@@ -359,9 +369,65 @@ function getJsonMunFil(idMun) {
     var fc = turf.featurecollection(arraymun);
     return fc;
 }
+
+
+function calEstadisticasMun(polygons, points, vec) {
+    var arraymun = [];
+    $.each(vec, function (index, value) {
+        var filterOferta = turf.filter(points, 'DPTOMUN', value);
+        var aggregated = turf.aggregate(glo.extend, filterOferta, glo.aggregations);
+        var filterMUN = turf.filter(polygons, 'MPIO_CCNCT', value);
+        filterMUN.features[0].properties.numEmp_sum=aggregated.features[0].properties.numEmp_sum
+        filterMUN.features[0].properties.CosPro_avg=aggregated.features[0].properties.CosPro_avg
+        filterMUN.features[0].properties.ProAct_sum=aggregated.features[0].properties.ProAct_sum
+        filterMUN.features[0].properties.PreVen_avg=aggregated.features[0].properties.PreVen_avg
+        filterMUN.features[0].properties.point_count=aggregated.features[0].properties.point_count
+        arraymun.push(JSON.parse(JSON.stringify(filterMUN.features[0])));
+    });
+    
+    var fc = turf.featurecollection(arraymun);
+    var removeAggregated = turf.remove(fc, 'ProAct_sum', 0);
+    console.log('removeAggregated');
+    console.log(removeAggregated);
+    if (removeAggregated.features.length > 0) {
+        //console.log(removeAggregated);
+        if (removeAggregated.features.length > 5) {
+            glo.breaks = turf.jenks(removeAggregated, 'ProAct_sum', 5);
+        } else {
+            glo.breaks = turf.jenks(removeAggregated, 'ProAct_sum', removeAggregated.features.length - 1);
+        }
+        glo.breaks = glo.breaks.unique();
+        console.log(' glo.breaks');
+        console.log(glo.breaks);
+        if (glo.breaks != null) {
+            if (glo.breaks[0] != 0) {
+                glo.breaks.unshift(0);
+            }
+        } else {
+            glo.breaks = [];
+            glo.breaks.push(0);
+        }
+
+    } else {
+        glo.breaks = [];
+        glo.breaks.push(0);
+    }
+
+    $.each(fc.features, function (index, value) {
+        if (isNaN(value.properties.CosPro_avg)) {
+            value.properties.CosPro_avg = 0;
+            value.properties.PreVen_avg = 0;
+        }
+    });
+    return fc;
+}
+
 function calEstadisticas(polygons, points) {
+
     var aggregated = turf.aggregate(polygons, points, glo.aggregations);
     var removeAggregated = turf.remove(aggregated, 'ProAct_sum', 0);
+    console.log('removeAggregated');
+    console.log(removeAggregated);
     if (removeAggregated.features.length > 0) {
         //console.log(removeAggregated);
         if (removeAggregated.features.length > 5) {
@@ -369,11 +435,13 @@ function calEstadisticas(polygons, points) {
         } else {
             glo.breaks = turf.jenks(removeAggregated, 'ProAct_sum', removeAggregated.features.length-1);
         }
-        
-        /*console.log(' glo.breaks');
-        console.log(glo.breaks);*/
+        glo.breaks=glo.breaks.unique();
+        console.log(' glo.breaks');
+        console.log(glo.breaks);
         if (glo.breaks != null) {
-            glo.breaks[0] = 0;
+            if (glo.breaks[0] != 0) {
+                glo.breaks.unshift(0);
+            }
         } else {
             glo.breaks = [];
             glo.breaks.push(0);
@@ -401,11 +469,11 @@ function addOferta(filterOferta) {
     if ($("#selecEscala").val() == "Municipio") {
         var idMun = getIDMun(filterOferta); 
         glo.jsonMunFil = getJsonMunFil(idMun);
-        
         glo.lyrMunicipio = L.geoJson(glo.jsonMun, {
             style: styleMun
         }).addTo(map);
-        aggregados = calEstadisticas(glo.jsonMunFil, filterOferta);
+        aggregados = calEstadisticasMun(glo.jsonMunFil, filterOferta, idMun);
+        
     } else if ($("#selecEscala").val() == "Departamento") {
         aggregados = calEstadisticas(glo.jsonDto, filterOferta);
     }
