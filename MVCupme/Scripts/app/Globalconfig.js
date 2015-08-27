@@ -28,7 +28,7 @@ var glo = {
     lyrControl:'',
     lyrMate: '',
     lyrOferta: '',
-    lyrMunicipio:'',
+    lyrBaseMunDpto:'',
     extend: {
         "type": "FeatureCollection",
         "features": [

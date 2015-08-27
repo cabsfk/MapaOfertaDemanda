@@ -338,26 +338,29 @@ function styleDptoOfer(feature) {
         fillColor: getColor(feature.properties.ProAct_sum),
     };
 };
-function styleMun(feature) {
+function stylePoly(feature) {
     return {
-        weight: 1.5,
+        weight: 1.2,
         color: 'white',
-        dashArray: '3',
-        fillOpacity: 0.5,
+        fillOpacity: 0.4,
         fillColor: 'white',
     };
 };
-function getIDMun(filterOferta) {
-    var idMun = [];
+function getIDMunDpt(filterOferta) {
+    var idMun = [],idDepto=[],idMunDpto=[];
     //console.log(filterOferta);
     $.each(filterOferta.features, function (index, value) {
         idMun.push(value.properties.ID_DEPARTAMENTO + value.properties.ID_MUNICIPIO);
+        idDepto.push(value.properties.ID_DEPARTAMENTO);
         value.properties.DPTOMUN = value.properties.ID_DEPARTAMENTO + value.properties.ID_MUNICIPIO;
     });
     
     var UniIdMun = idMun.unique();
-    //console.log(filterOferta);
-    return UniIdMun;
+    var UniIdDeto = idDepto.unique();
+    console.log(UniIdMun);
+    console.log(UniIdDeto);
+    idMunDpto = [UniIdDeto,UniIdMun];
+    return idMunDpto;
 }
 
 function getJsonMunFil(idMun) {
@@ -371,21 +374,24 @@ function getJsonMunFil(idMun) {
 }
 
 
-function calEstadisticasMun(polygons, points, vec) {
+function calEstadisticasMun(polygons, points, vec,filtro) {
     var arraymun = [];
+    console.log(points);
     $.each(vec, function (index, value) {
-        var filterOferta = turf.filter(points, 'DPTOMUN', value);
+        var filterOferta = turf.filter(points, filtro[0], value);
+        //if (value == '66') { console.log(filterOferta);}
         var aggregated = turf.aggregate(glo.extend, filterOferta, glo.aggregations);
-        var filterMUN = turf.filter(polygons, 'MPIO_CCNCT', value);
-        filterMUN.features[0].properties.numEmp_sum=aggregated.features[0].properties.numEmp_sum
-        filterMUN.features[0].properties.CosPro_avg=aggregated.features[0].properties.CosPro_avg
-        filterMUN.features[0].properties.ProAct_sum=aggregated.features[0].properties.ProAct_sum
-        filterMUN.features[0].properties.PreVen_avg=aggregated.features[0].properties.PreVen_avg
-        filterMUN.features[0].properties.point_count=aggregated.features[0].properties.point_count
-        arraymun.push(JSON.parse(JSON.stringify(filterMUN.features[0])));
+        var filter = turf.filter(polygons, filtro[1], value);
+        filter.features[0].properties.numEmp_sum=aggregated.features[0].properties.numEmp_sum
+        filter.features[0].properties.CosPro_avg=aggregated.features[0].properties.CosPro_avg
+        filter.features[0].properties.ProAct_sum=aggregated.features[0].properties.ProAct_sum
+        filter.features[0].properties.PreVen_avg=aggregated.features[0].properties.PreVen_avg
+        filter.features[0].properties.point_count=aggregated.features[0].properties.point_count
+        arraymun.push(JSON.parse(JSON.stringify(filter.features[0])));
     });
     
     var fc = turf.featurecollection(arraymun);
+    console.log(fc);
     var removeAggregated = turf.remove(fc, 'ProAct_sum', 0);
     console.log('removeAggregated');
     console.log(removeAggregated);
@@ -422,60 +428,28 @@ function calEstadisticasMun(polygons, points, vec) {
     return fc;
 }
 
-function calEstadisticas(polygons, points) {
 
-    var aggregated = turf.aggregate(polygons, points, glo.aggregations);
-    var removeAggregated = turf.remove(aggregated, 'ProAct_sum', 0);
-    console.log('removeAggregated');
-    console.log(removeAggregated);
-    if (removeAggregated.features.length > 0) {
-        //console.log(removeAggregated);
-        if (removeAggregated.features.length > 5) {
-            glo.breaks = turf.jenks(removeAggregated, 'ProAct_sum', 5);
-        } else {
-            glo.breaks = turf.jenks(removeAggregated, 'ProAct_sum', removeAggregated.features.length-1);
-        }
-        glo.breaks=glo.breaks.unique();
-        console.log(' glo.breaks');
-        console.log(glo.breaks);
-        if (glo.breaks != null) {
-            if (glo.breaks[0] != 0) {
-                glo.breaks.unshift(0);
-            }
-        } else {
-            glo.breaks = [];
-            glo.breaks.push(0);
-        }
-        
-    } else {
-        glo.breaks = [];
-        glo.breaks.push(0);
-    }
-
-    $.each(aggregated.features, function (index, value) {
-        if (isNaN(value.properties.CosPro_avg)) {
-            value.properties.CosPro_avg = 0;
-            value.properties.PreVen_avg = 0;
-        }
-    });
-    return aggregated;
-}
 
 function addOferta(filterOferta) {
     var aggregados = '';
-    if (map.hasLayer(glo.lyrMunicipio)) {
-        map.removeLayer(glo.lyrMunicipio);
+    if (map.hasLayer(glo.lyrBaseMunDpto)) {
+        map.removeLayer(glo.lyrBaseMunDpto);
     }
     if ($("#selecEscala").val() == "Municipio") {
-        var idMun = getIDMun(filterOferta); 
-        glo.jsonMunFil = getJsonMunFil(idMun);
-        glo.lyrMunicipio = L.geoJson(glo.jsonMun, {
-            style: styleMun
+        var idMunDpt = getIDMunDpt(filterOferta);
+        var idMun = idMunDpt[1];
+        glo.lyrBaseMunDpto = L.geoJson(glo.jsonMun, {
+            style: stylePoly
         }).addTo(map);
-        aggregados = calEstadisticasMun(glo.jsonMunFil, filterOferta, idMun);
+        aggregados = calEstadisticasMun(glo.jsonMun, filterOferta, idMun,['DPTOMUN','MPIO_CCNCT']);
         
     } else if ($("#selecEscala").val() == "Departamento") {
-        aggregados = calEstadisticas(glo.jsonDto, filterOferta);
+        var idMunDpt = getIDMunDpt(filterOferta);
+        var idDpto = idMunDpt[0];
+        glo.lyrBaseMunDpto = L.geoJson(glo.jsonDto, {
+            style: stylePoly
+        }).addTo(map);
+        aggregados = calEstadisticasMun(glo.jsonDto, filterOferta, idDpto,['ID_DEPARTAMENTO','CODIGO_DEP'] );
     }
     
     
@@ -490,32 +464,17 @@ function addOferta(filterOferta) {
 
     glo.lyrOferta.addTo(map).bringToBack();
 
-    if (map.hasLayer(glo.lyrMunicipio)) {
-        glo.lyrMunicipio.bringToBack();
+    if (map.hasLayer(glo.lyrBaseMunDpto)) {
+        glo.lyrBaseMunDpto.bringToBack();
     }
     controlcapas();
 }
 
 map.on('overlayadd', function (eventLayer) {
-    // Switch to the Population legend...
-    
     if (eventLayer.name === 'Demanda') {
         glo.lyrMate.bringToFront();
-       // $('#LegendDemanda').show();        
     }
     if (eventLayer.name === 'Oferta' ) {
         glo.lyrMate.bringToFront();
-        //$('#LegendOferta').show();        
-    }
-});
-map.on('overlayremove', function (eventLayer) {
-    // Switch to the Population legend...
-
-    if (eventLayer.name === 'Demanda') {
-        //$('#LegendDemanda').hide();        
-    }
-    if (eventLayer.name === 'Oferta') {
-       // $('#LegendOferta').hide();
-        
     }
 });
