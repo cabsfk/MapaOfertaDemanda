@@ -346,12 +346,8 @@
     <Content Include="Scripts\app\Ayuda.js" />
     <Content Include="Scripts\app\BusquedaMun.js" />
     <Content Include="Scripts\app\Globalconfig.js" />
-    <Content Include="Scripts\app\MainActualizacion.js" />
     <Content Include="Scripts\app\MainCargaDatos.js" />
     <Content Include="Scripts\app\MainIndex.js" />
-    <Content Include="Scripts\app\MainMapCrear.js" />
-    <Content Include="Scripts\app\MainMapEditar.js" />
-    <Content Include="Scripts\app\MainPie.js" />
     <Content Include="Scripts\app\Usuarios.js" />
     <Content Include="Scripts\app\MainNav.js" />
     <Content Include="Scripts\app\MainMap.js" />

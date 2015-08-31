@@ -323,9 +323,13 @@ query_Estudio.where("1='1'").returnGeometry(false).run(function (error, featureC
    // $("#selecEstudio").append('<option value="" > </option>');
     $.each(featureCollection.features.reverse(), function (index, value) {
         data[value.properties.ID_ESTUDIO] = value.properties.NOMBRE + ' ( ' + value.properties.ANIO + ' ) ';
-        $("#selecEstudio").append('<option value="' + value.properties.ID_ESTUDIO + '" >' + value.properties.ID_ESTUDIO + '. ' + value.properties.NOMBRE.substring(0, 150) + '... ( ' + value.properties.ANIO + ' ) ' + '</option>');
+        if ((featureCollection.features.length) == (index+1)) {
+            $("#selecEstudio").append('<option value="' + value.properties.ID_ESTUDIO + '" selected >' + value.properties.ID_ESTUDIO + '. ' + value.properties.NOMBRE.substring(0, 150) + '... ( ' + value.properties.ANIO + ' ) ' + '</option>');
+        } else {
+            $("#selecEstudio").append('<option value="' + value.properties.ID_ESTUDIO + '" >' + value.properties.ID_ESTUDIO + '. ' + value.properties.NOMBRE.substring(0, 150) + '... ( ' + value.properties.ANIO + ' ) ' + '</option>');
+        }
+        
     });
-    $("#selecEstudio").val((featureCollection.features.length));
     glo.listEstudio = data;
 });
 

@@ -20,6 +20,7 @@ function getParametroFilter() {
 }
 
 $("#selecMineral").change(function () {
+    getUniMate($("#selecMineral").val());
     var filteredDemanda = turf.filter(glo.Arraycentroid, 'MINERAL', $("#selecMineral").val());
     resetMapa();
     addCentroid(filteredDemanda);
