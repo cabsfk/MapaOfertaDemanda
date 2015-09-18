@@ -45,7 +45,7 @@ $("#city").autocomplete({
         $(this).removeClass("ui-corner-top").addClass("ui-corner-all");
     }
 }).keypress(function (e) {
-     if (e.keyCode === 13) {
+    if (e.keyCode === 13) {
         e.preventDefault();
         return false;
     }
@@ -78,7 +78,7 @@ $("#BtnLimpiarMun").click(function () {
     if (map.hasLayer(LyrMunicipio)) {
         map.removeLayer(LyrMunicipio);
     }
-    
+
     map.setView([4.12521648, -74.5020], 5);
     $("#city").val("");
     $("#city").focus();

@@ -183,7 +183,8 @@ function CargaOfertaDemanda() {
                 //console.log("Unidad mate " + glo.UniMate);
                
                 $("#selecMineral").append('<option value="' + glo.Materiales[0] + '" selected>' + glo.textMineral[glo.Materiales[0]] + '</option>');
-
+                $('#tituloMineral').empty().append(glo.textMineral[glo.Materiales[0]]);
+                $('#tituloEstudio').empty().append(glo.listEstudio[Estudio]);
                 for (i = 1; i < glo.Materiales.length; i++) {
                     $("#selecMineral").append('<option value="' + glo.Materiales[i] + '" >' + glo.textMineral[glo.Materiales[i]] + '</option>');
                 }

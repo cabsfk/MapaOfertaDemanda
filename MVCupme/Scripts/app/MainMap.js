@@ -22,6 +22,7 @@ function getParametroFilter() {
 $("#selecMineral").change(function () {
     getUniMate($("#selecMineral").val());
     var filteredDemanda = turf.filter(glo.Arraycentroid, 'MINERAL', $("#selecMineral").val());
+    $('#tituloMineral').empty().append(glo.textMineral[$("#selecMineral").val()]);
     resetMapa();
     addCentroid(filteredDemanda);
     getParametroFilter();
@@ -31,13 +32,13 @@ $("#selecEscala").change(function () {
     getParametroFilter();    
 });
 
-$("#selecEstudio").change(function () {
+function selecEstudiochange() {
     if (glo.addlegend == true) {
         legend.removeFrom(map);
     }
     glo.Anio = 0;
     CargaOfertaDemanda();
-});
+};
 
 function calRadio(Arraycentroid) {
     //console.log(glo.DEMANDA_ANIO);
@@ -246,7 +247,8 @@ function graficarDemandaMun(nomGraficaDemanda, dataGraficaDemanda, dataGraficaPr
                 }
             },
             credits: {
-                enabled: false
+                text: 'Mineria-UPME',
+                href: 'http://www.upme.gov.co'
             },
             series: [{
                 name: 'Demanda',
@@ -255,7 +257,10 @@ function graficarDemandaMun(nomGraficaDemanda, dataGraficaDemanda, dataGraficaPr
                 name: 'Produccion',
                 data: dataGraficaProduccion
             }
-            ]
+            ],
+            exporting: {
+                filename: 'Demanda por Sitio'
+            }
         });
     }
 };
@@ -357,6 +362,7 @@ function getIDMunDpt(filterOferta) {
         idMun.push(value.properties.ID_DEPARTAMENTO + value.properties.ID_MUNICIPIO);
         idDepto.push(value.properties.ID_DEPARTAMENTO);
         value.properties.DPTOMUN = value.properties.ID_DEPARTAMENTO + value.properties.ID_MUNICIPIO;
+
     });
     
     var UniIdMun = idMun.unique();
@@ -377,10 +383,44 @@ function getJsonMunFil(idMun) {
     return fc;
 }
 
+function clicklistaDptoMun(IdDptoMun) {
+    $('#ListaCiudad .clearfix').removeClass('active');
+
+    $('#DptoMun' + IdDptoMun).addClass('active');
+}
+function ListBusquedaMunDpto(fc) {
+    var active = '';
+    if (glo.listDtoMun == '') {
+        active = '';
+    }
+
+    if(fc.properties.MPIO_CCNCT==undefined){
+        glo.listDtoMun =
+        glo.listDtoMun + '<li class="left">' +
+        '<div id="DptoMun' + fc.properties.CODIGO_DEP +
+            '" class="clearfix ' + active + '" onclick="clicklistaDptoMun(\'' + fc.properties.CODIGO_DEP + '\')">' +
+                '<h5>' +fc.properties.NOMBRE
+                + '</h5>' +
+            '</div>' +
+        '</li>';
+
+    }else{
+        glo.listDtoMun =
+        glo.listDtoMun + '<li class="left">' +
+        '<div id="DptoMun' + fc.properties.MPIO_CCNCT +
+            '" class="clearfix ' + active + '" onclick="clicklistaDptoMun(\'' + fc.properties.MPIO_CCNCT + '\')">' +
+                '<h5>' + fc.properties.MPIO_CNMBR
+                + '</h5>' +
+            '</div>' +
+        '</li>';
+    }
+    
+}
 
 function calEstadisticasMun(polygons, points, vec,filtro) {
     var arraymun = [];
-    //console.log(points);
+    glo.listDtoMun = '';
+    $("#DivListaCiudad").empty().append('<div id="ListaCiudad"><ul class="chat"></ul></div></div>');
     $.each(vec, function (index, value) {
         var filterOferta = turf.filter(points, filtro[0], value);
         //if (value == '66') { console.log(filterOferta);}
@@ -392,10 +432,25 @@ function calEstadisticasMun(polygons, points, vec,filtro) {
         filter.features[0].properties.PreVen_avg=aggregated.features[0].properties.PreVen_avg
         filter.features[0].properties.point_count=aggregated.features[0].properties.point_count
         arraymun.push(JSON.parse(JSON.stringify(filter.features[0])));
+        console.log(filter.features[0]);
+        ListBusquedaMunDpto(filter.features[0]);
     });
     
+
     var fc = turf.featurecollection(arraymun);
-    //console.log(fc);
+    
+    $("#ListaCiudad .chat").empty().prepend(glo.listDtoMun).searchable({
+        searchField: '#searchCiudad',
+        selector: 'li',
+        childSelector: '.clearfix',
+        show: function (elem) {
+            elem.slideDown(100);
+        },
+        hide: function (elem) {
+            elem.slideUp(100);
+        }
+    });;
+
     var removeAggregated = turf.remove(fc, 'ProAct_sum', 0);
     //console.log('removeAggregated');
     //console.log(removeAggregated);
@@ -407,8 +462,6 @@ function calEstadisticasMun(polygons, points, vec,filtro) {
             glo.breaks = turf.jenks(removeAggregated, 'ProAct_sum', removeAggregated.features.length - 1);
         }
         glo.breaks = glo.breaks.unique();
-        /*console.log(' glo.breaks');
-        console.log(glo.breaks);*/
         if (glo.breaks != null) {
             if (glo.breaks[0] != 0) {
                 glo.breaks.unshift(0);
@@ -429,6 +482,7 @@ function calEstadisticasMun(polygons, points, vec,filtro) {
             value.properties.PreVen_avg = 0;
         }
     });
+    ///console.log(fc);
     return fc;
 }
 

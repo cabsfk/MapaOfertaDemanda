@@ -1,5 +1,5 @@
 ﻿
-//Servicios Informacion Fondos.\\
+
 
 var config = {
     dominio: "http://arcgis.simec.gov.co:6080", //Dominio del arcgis server  "http://localhost:6080" //http://arcgis.simec.gov.co:6080
@@ -11,7 +11,8 @@ var config = {
     EP_OFERTA: "3",
     EP_ESTUDIOS: "5",
     EP_MINERALES: "6",
-    EP_OFERTA_MUN: "7"
+    EP_OFERTA_MUN: "7",
+    nota:'Encuentre aquí información relacionada con la Oferta de Minerales de Colombia, proveniente de estudios realizados por la UPME y de información compartida por otras entidades del sector minero.'
 
 }
 
@@ -100,7 +101,9 @@ var glo = {
               inField: '',
               outField: 'point_count'
           }
-    ]
+    ],
+    panelOferta:true,
+    listDtoMun:'',
 }
 
 /***********************************
@@ -126,14 +129,7 @@ new L.Control.Zoom({ position: 'topright' }).addTo(map);
 **********************************/
 var legend = L.control({ position: 'bottomright' });
 var pagina = document.URL.split("/");
-var Nombrepagina = pagina[pagina.length - 1];
-Nombrepagina = Nombrepagina.replace("#", "");
-var prefijo = "";
-if (Nombrepagina == "") {
-    prefijo = "./";
-}else{
-    prefijo = "../";
-}
+var prefijoUrl = pagina[0] + '/' + pagina[1] + '/' + pagina[2] + '/' + pagina[3];
 
 function getColor(d) {
     return d >= glo.breaks[5] ? '#FC4E2A' :
@@ -188,10 +184,16 @@ legend.onAdd = function (map) {
      }
      div.innerHTML += '</div><center><b>Convenciones</b></center>';
 
-     div.innerHTML += '<i ><img src="images/leyend/municipioSelecionado.png"  height="17px"></i>Municipio Seleccionado<br>';
+     div.innerHTML += '<i ><img src="' + prefijoUrl + '/images/leyend/municipioSelecionado.png"  height="17px"></i>Municipio Seleccionado<br>';
      return div;
     
 };
+
+var mousemove = document.getElementById('mousemove');
+
+map.on('mousemove', function (e) {
+    window[e.type].innerHTML = '<h5>LON:' + e.latlng.lng.toFixed(6) + '   LAT:' + e.latlng.lat.toFixed(6) + '</h5>';
+});
 
 $("#BtnMonstrarConven").click(function () {
     if ($(".legend").is(":visible")) {
@@ -213,7 +215,14 @@ Array.prototype.unique = function (a) {
     return c.indexOf(a, b + 1) < 0
 });
 
-
+$('#PanelOfertaMap,#PanelProyOferta').css('height', ($(window).height() - 50) + 'px');
+$('#ListaEstudios').css('max-height', ($(window).height() - 150) + 'px');
+map.invalidateSize();
+$(window).resize(function () {
+    $('#PanelOfertaMap,#PanelProyOferta').css('height', ($(window).height() - 50) + 'px');
+    $('#ListaEstudios').css('max-height', ($(window).height() - 150) + 'px');
+    map.invalidateSize();
+});
 
 /*********************************
 //CAPAS BASE 
@@ -311,24 +320,77 @@ query_Mineral.where("1='1'").returnGeometry(false).run(function (error, featureC
     });
     glo.textMineral = data;
 });
+$('#BtnOcultarEstudios').click(function () {
+    if (glo.panelOferta) {
+        $('#PanelProyOferta').css('width', '2%');
+        $('#PanelOfertaMap').css('width', '99%');
+        $('#PanelOfertaMap').css('left', '2%');
+        $('#panelEstudioslist').hide();
+        $('#BtnOcultarEstudios').empty().append('<span class="glyphicon glyphicon-chevron-right" aria-hidden="true"></span>');
 
+        
+        glo.panelOferta = false;
+    } else {
+        $('#PanelProyOferta').css('width', '20%');
+        $('#PanelOfertaMap').css('width', '80%');
+        $('#PanelOfertaMap').css('left', '20%');
+        $('#panelEstudioslist').show();
+        $('#BtnOcultarEstudios').empty().append('<span class="glyphicon glyphicon-chevron-left" aria-hidden="true"></span>');
+        glo.panelOferta = true;
+    }
+    map.invalidateSize();
+});
 
 
 var query_Estudio = L.esri.Tasks.query({
     url: config.dominio + config.urlHostDataMA + 'MapServer/' + config.EP_ESTUDIOS
 });
 
+
+function clicklistaestudio(IdEstudio) {
+    $('#selecEstudio').val(IdEstudio);
+    $('#ListaEstudios .clearfix').removeClass('active');
+    $('#Estudio' + IdEstudio).addClass('active');
+    $('#tituloEstudio').empty().append(glo.listEstudio[IdEstudio]);
+    selecEstudiochange();
+    
+}
 query_Estudio.where("1='1'").returnGeometry(false).run(function (error, featureCollection) {
-    var data = [];
+    var data = [], active='';
    // $("#selecEstudio").append('<option value="" > </option>');
     $.each(featureCollection.features.reverse(), function (index, value) {
         data[value.properties.ID_ESTUDIO] = value.properties.NOMBRE + ' ( ' + value.properties.ANIO + ' ) ';
         if ((featureCollection.features.length) == (index+1)) {
             $("#selecEstudio").append('<option value="' + value.properties.ID_ESTUDIO + '" selected >' + value.properties.ID_ESTUDIO + '. ' + value.properties.NOMBRE.substring(0, 150) + '... ( ' + value.properties.ANIO + ' ) ' + '</option>');
+            active = 'active';
+            $('#tituloEstudio').empty().append(value.properties.ID_ESTUDIO + '. ' + value.properties.NOMBRE.substring(0, 250) + ' ( ' + value.properties.ANIO + ' ) ');
         } else {
             $("#selecEstudio").append('<option value="' + value.properties.ID_ESTUDIO + '" >' + value.properties.ID_ESTUDIO + '. ' + value.properties.NOMBRE.substring(0, 150) + '... ( ' + value.properties.ANIO + ' ) ' + '</option>');
         }
         
+        $("#ListaEstudios .chat").prepend(
+        
+            '<li class="left">' +
+                       '<div id="Estudio' + value.properties.ID_ESTUDIO +
+                       '" class="clearfix ' + active + '" onclick="clicklistaestudio(' + value.properties.ID_ESTUDIO + ')">' +
+                           '<h5>' +
+                              value.properties.ID_ESTUDIO + '. ' + value.properties.NOMBRE + ' ( ' + value.properties.ANIO + ' ) '
+                                 + '</h5>' +
+                        '</div>' +
+                  '</li>'
+           );
+        active = '';
+    });
+    $('#ListaEstudios').searchable({
+        searchField: '#searchEstudio',
+        selector: 'li',
+        childSelector: '.clearfix',
+        show: function (elem) {
+            elem.slideDown(100);
+        },
+        hide: function (elem) {
+            elem.slideUp(100);
+        }
     });
     glo.listEstudio = data;
 });
@@ -385,3 +447,17 @@ $(function () {
         }
     });
  });
+BootstrapDialog.show({
+    title: 'NOTA ACLARATORIA',
+    message: config.nota,
+    closable: false,
+
+    buttons: [
+      {
+        label: 'Entiendo la Aclaración',
+        cssClass: 'btn-success',
+        action: function (dialogRef) {
+            dialogRef.close();
+        }
+    }]
+});
