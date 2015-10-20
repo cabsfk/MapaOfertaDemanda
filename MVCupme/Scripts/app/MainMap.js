@@ -359,10 +359,17 @@ function getIDMunDpt(filterOferta) {
     var idMun = [],idDepto=[],idMunDpto=[];
     //console.log(filterOferta);
     $.each(filterOferta.features, function (index, value) {
-        idMun.push(value.properties.ID_DEPARTAMENTO + value.properties.ID_MUNICIPIO);
-        idDepto.push(value.properties.ID_DEPARTAMENTO);
-        value.properties.DPTOMUN = value.properties.ID_DEPARTAMENTO + value.properties.ID_MUNICIPIO;
-
+       // console.log(value.properties.DPTOMUN);
+        if (value.properties.DPTOMUN !== undefined) {
+            value.properties.ID_DEPARTAMENTO = value.properties.DPTOMUN.substr(0, 2);
+            value.properties.ID_MUNICIPIO = value.properties.DPTOMUN.substr(2, 3);
+            idMun.push(value.properties.ID_DEPARTAMENTO + value.properties.ID_MUNICIPIO);
+            idDepto.push(value.properties.ID_DEPARTAMENTO);
+        } else {
+            value.properties.DPTOMUN = '00000';
+            value.properties.ID_DEPARTAMENTO = '00';
+            value.properties.ID_DEPARTAMENTO = '000';
+        }
     });
     
     var UniIdMun = idMun.unique();
@@ -383,10 +390,23 @@ function getJsonMunFil(idMun) {
     return fc;
 }
 
-function clicklistaDptoMun(IdDptoMun) {
+function clicklistaDptoMun(IdDptoMun, escala, nombre) {
     $('#ListaCiudad .clearfix').removeClass('active');
-
     $('#DptoMun' + IdDptoMun).addClass('active');
+    console.log(IdDptoMun);
+    console.log(escala);
+    if (escala == 'Dpto') {
+        var json = getDtoGeo(IdDptoMun);
+        selAlfMun(json);
+    } else {
+        var value = [IdDptoMun];
+        var json = getJsonMunFil(value);
+        //console.log(json);
+        selAlfMun(json);
+    }
+    $('#searchCiudad').val(nombre);
+
+
 }
 function ListBusquedaMunDpto(fc) {
     var active = '';
@@ -394,27 +414,26 @@ function ListBusquedaMunDpto(fc) {
         active = '';
     }
 
-    if(fc.properties.MPIO_CCNCT==undefined){
+    if (fc.properties.MPIO_CCNCT == undefined) {
         glo.listDtoMun =
         glo.listDtoMun + '<li class="left">' +
         '<div id="DptoMun' + fc.properties.CODIGO_DEP +
-            '" class="clearfix ' + active + '" onclick="clicklistaDptoMun(\'' + fc.properties.CODIGO_DEP + '\')">' +
-                '<h5>' +fc.properties.NOMBRE
+            '" class="clearfix ' + active + '" onclick="clicklistaDptoMun(\'' + fc.properties.CODIGO_DEP + '\',\'Dpto\',\'' + fc.properties.NOMBRE + '\')">' +
+                '<h5>' + fc.properties.NOMBRE
                 + '</h5>' +
             '</div>' +
         '</li>';
-
-    }else{
+    } else {
         glo.listDtoMun =
         glo.listDtoMun + '<li class="left">' +
         '<div id="DptoMun' + fc.properties.MPIO_CCNCT +
-            '" class="clearfix ' + active + '" onclick="clicklistaDptoMun(\'' + fc.properties.MPIO_CCNCT + '\')">' +
+            '" class="clearfix ' + active + '" onclick="clicklistaDptoMun(\'' + fc.properties.MPIO_CCNCT + '\',\'Mun\',\'' + fc.properties.MPIO_CNMBR + '\')">' +
                 '<h5>' + fc.properties.MPIO_CNMBR
                 + '</h5>' +
             '</div>' +
         '</li>';
     }
-    
+
 }
 
 function calEstadisticasMun(polygons, points, vec,filtro) {
@@ -424,6 +443,7 @@ function calEstadisticasMun(polygons, points, vec,filtro) {
     $.each(vec, function (index, value) {
         var filterOferta = turf.filter(points, filtro[0], value);
         //if (value == '66') { console.log(filterOferta);}
+        
         var aggregated = turf.aggregate(glo.extend, filterOferta, glo.aggregations);
         var filter = turf.filter(polygons, filtro[1], value);
         filter.features[0].properties.numEmp_sum=aggregated.features[0].properties.numEmp_sum
@@ -432,7 +452,6 @@ function calEstadisticasMun(polygons, points, vec,filtro) {
         filter.features[0].properties.PreVen_avg=aggregated.features[0].properties.PreVen_avg
         filter.features[0].properties.point_count=aggregated.features[0].properties.point_count
         arraymun.push(JSON.parse(JSON.stringify(filter.features[0])));
-        console.log(filter.features[0]);
         ListBusquedaMunDpto(filter.features[0]);
     });
     
@@ -535,4 +554,43 @@ map.on('overlayadd', function (eventLayer) {
     if (eventLayer.name === 'Oferta' ) {
         glo.lyrMate.bringToFront();
     }
+});
+$(function () {
+    $('[data-toggle="tooltip"]').tooltip();
+    $("#SelctRestricciones").multiselect({
+        includeSelectAllOption: true,
+        enableFiltering: true,
+        selectAllText: 'Todos',
+        enableCaseInsensitiveFiltering: true,
+        dropRight: false,
+        buttonWidth: '250px',
+
+        filterPlaceholder: 'Buscar...',
+        buttonText: function (options, select) {
+
+            glo.ArrayRestric = [];
+            if (options.length === 0) {
+                if (glo.ArrayOfertas != '') {
+                    getParametroFilter();
+                }
+
+                return 'No hay Seleccionados';
+            }
+            else {
+                var labels = [];
+                options.each(function () {
+                    //console.log($(this).attr('value'));
+                    glo.ArrayRestric.push($(this).attr('value'));
+                    if ($(this).attr('label') !== undefined) {
+                        labels.push($(this).attr('label'));
+                    }
+                    else {
+                        labels.push($(this).html());
+                    }
+                });
+                getParametroFilter();
+                return labels.join(', ') + '';
+            }
+        }
+    });
 });

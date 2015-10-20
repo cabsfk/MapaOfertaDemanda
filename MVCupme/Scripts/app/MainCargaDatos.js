@@ -31,6 +31,17 @@ function addAnios() {
     }
     
 }
+function getDtoGeo(Dpto) {
+
+    var filDpto = turf.filter(glo.jsonDto, 'CODIGO_DEP', Dpto);
+    if (filDpto.features.length > 0) {
+        return filDpto;
+    } else {
+        return "Revise cod Dept";
+    }
+
+}
+
 function getDto(Dpto) {
     
     var filDpto = turf.filter(glo.jsonDto, 'CODIGO_DEP', Dpto);
@@ -149,6 +160,7 @@ function CargaOfertaDemanda() {
         $('#infoDemanda').empty();
         if (fCDemanda.features.length==0) {
             $('#infoDemanda').empty().append('No hay datos de DEMANDA');
+            glo.addlegend = false;
         }
 
         var queryOferta = L.esri.Tasks.query({
@@ -177,8 +189,13 @@ function CargaOfertaDemanda() {
 
                     i++;
                 });
+                i=0;
+                fCOferta = turf.tag(fCOferta, glo.jsonMun, 'MPIO_CCNCT', 'DPTOMUN');
                 glo.Materiales = arrayMi.unique();
-                getUniMate(glo.Materiales[0]);
+                if (glo.Materiales.length > 0) {
+                    getUniMate(glo.Materiales[0]);
+                }
+
 
                 //console.log("Unidad mate " + glo.UniMate);
                
@@ -207,6 +224,7 @@ function CargaOfertaDemanda() {
                 });
             } else {
                 $('#infoOferta').empty().append('No hay datos de OFERTA');
+                glo.addlegend = false;
                 waitingDialog.hide();
             }
            

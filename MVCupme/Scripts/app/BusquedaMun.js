@@ -35,7 +35,7 @@ $("#city").autocomplete({
         if (map.hasLayer(LyrMunicipio)) {
             map.removeLayer(LyrMunicipio);
         }
-        selAlfMun(ui.item.geojson, ui.item.MPIO, ui.item.DPTO);
+        selAlfMun(ui.item.geojson);
     },
     open: function () {
         $(this).removeClass("ui-corner-all").addClass("ui-corner-top");
@@ -58,30 +58,48 @@ $("#city").autocomplete({
 };
 
 
-var selAlfMun = function (json, Mpio, Dpto) {
+var selAlfMun = function (json) {
+    if (map.hasLayer(LyrMunicipio)) {
+        map.removeLayer(LyrMunicipio);
+    }
+    //console.log(json);
 
     LyrMunicipio = L.geoJson(json, {
         style: function (feature) {
             return {
                 color: '#00FFFC',
-                weight: 5,
+                weight: 6,
                 opacity: 1,
                 fillOpacity: 0.007
             }
         }
     }).addTo(map);
     map.fitBounds(LyrMunicipio.getBounds());
+    LyrMunicipio.bringToBack();
 }
 
 
-$("#BtnLimpiarMun").click(function () {
+function LimpiarBusquedaMapa() {
     if (map.hasLayer(LyrMunicipio)) {
         map.removeLayer(LyrMunicipio);
     }
 
     map.setView([4.12521648, -74.5020], 5);
+
+};
+
+$("#BtnBusquedaLimpiar").click(function (event) {
+    LimpiarBusquedaMapa();
+    $('#searchCiudad').val('');
+    $('#ListaCiudad .clearfix').removeClass('active');
+    $('#searchCiudad').focus();
+    var e = jQuery.Event("change");
+    $('#searchCiudad').trigger(e);
+});
+
+$("#BtnLimpiarMun").click(function (event) {
+    LimpiarBusquedaMapa();
     $("#city").val("");
     $("#city").focus();
-
 });
 

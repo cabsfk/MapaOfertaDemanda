@@ -12,7 +12,7 @@ var config = {
     EP_ESTUDIOS: "5",
     EP_MINERALES: "6",
     EP_OFERTA_MUN: "7",
-    nota:'Encuentre aquí información relacionada con la Oferta de Minerales de Colombia, proveniente de estudios realizados por la UPME y de información compartida por otras entidades del sector minero.'
+    nota: 'Encuentre aquí información relacionada con la Oferta de Minerales de Colombia, proveniente de estudios realizados por la UPME y de información compartida por otras entidades del sector minero.'
 
 }
 
@@ -408,45 +408,7 @@ $('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
 
 });
 
-$(function () {
-    $('[data-toggle="tooltip"]').tooltip();
-    $("#SelctRestricciones").multiselect({
-        includeSelectAllOption: true,
-        enableFiltering: true,
-        selectAllText: 'Todos',
-        enableCaseInsensitiveFiltering: true,
-        dropRight: false,
-        buttonWidth: '250px',
-        
-        filterPlaceholder: 'Buscar...',
-        buttonText: function (options, select) {
-            
-            glo.ArrayRestric = [];
-            if (options.length === 0) {
-                if (glo.ArrayOfertas != '') {
-                    getParametroFilter();
-                }
-                
-                return 'No hay Seleccionados';
-            }
-            else {
-                var labels = [];
-                options.each(function () {
-                    //console.log($(this).attr('value'));
-                    glo.ArrayRestric.push($(this).attr('value'));
-                    if ($(this).attr('label') !== undefined) {
-                        labels.push($(this).attr('label'));
-                    }
-                    else {
-                        labels.push($(this).html());
-                    }
-                });
-                getParametroFilter();
-                return labels.join(', ') + '';
-            }
-        }
-    });
- });
+
 BootstrapDialog.show({
     title: 'NOTA ACLARATORIA',
     message: config.nota,
