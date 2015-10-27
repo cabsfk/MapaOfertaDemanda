@@ -9,7 +9,7 @@ namespace MVCupme.Controllers
 {
     public class GlobalVariables
     {
-        private const int cod_modulo = 3;
+        private const int cod_modulo = 7;
 
         // read-write variable
         public static string idUsuario

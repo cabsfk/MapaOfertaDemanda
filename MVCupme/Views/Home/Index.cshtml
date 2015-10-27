@@ -6,7 +6,18 @@
 {
     
 <script>   
-    var _0xbaa2 = ["", "\x2E\x2F\x48\x6F\x6D\x65\x2F\x55\x73\x72\x52\x6F\x6C\x4A\x73\x6F\x6E\x3F\x69\x64\x75\x73\x75\x61\x72\x69\x6F\x3D", "\x55\x73\x72\x52\x6F\x6C\x4A\x73\x6F\x6E", "\x6C\x6F\x67", "\x6C\x65\x6E\x67\x74\x68", "\x72\x6F\x6C", "\x41\x44\x4D\x49\x4E", "\x6F\x72\x67\x61\x6E\x69\x7A\x61\x63\x69\x6F\x6E", "\x61\x70\x70\x65\x6E\x64", "\x65\x6D\x70\x74\x79", "\x23\x74\x69\x74\x75\x6C\x6F\x4F\x72\x67\x61\x6E\x69\x7A\x61\x63\x69\x6F\x6E", "\x73\x75\x62\x6D\x69\x74", "\x6C\x6F\x67\x6F\x75\x74\x46\x6F\x72\x6D", "\x67\x65\x74\x45\x6C\x65\x6D\x65\x6E\x74\x42\x79\x49\x64", "\x67\x65\x74\x4A\x53\x4F\x4E"]; if (idUsuario != _0xbaa2[0]) { $[_0xbaa2[14]](_0xbaa2[1] + idUsuario, function (_0x9a1bx1) { console[_0xbaa2[3]](_0xbaa2[2]); console[_0xbaa2[3]](_0x9a1bx1); if (_0x9a1bx1[_0xbaa2[4]] != 0 && _0x9a1bx1[0][_0xbaa2[5]] == _0xbaa2[6]) { UsrOrgJson = _0x9a1bx1; $(_0xbaa2[10])[_0xbaa2[9]]()[_0xbaa2[8]](UsrOrgJson[0][_0xbaa2[7]]); } else { document[_0xbaa2[13]](_0xbaa2[12])[_0xbaa2[11]]() }; }) };
+    if (idUsuario != "") {
+        $.getJSON("./Home/UsrRolJson?idusuario=" + idUsuario, function (data) {
+            console.log('UsrRolJson');
+            console.log(data);
+            if (data.length != 0 && data[0].rol == 'ADMIN') {
+                UsrOrgJson = data;
+                $("#tituloOrganizacion").empty().append(UsrOrgJson[0].organizacion);
+            } else {
+                document.getElementById('logoutForm').submit();
+            }
+        });
+    }
 </script>   
 <div id="PanelProyOferta">
     <div class="panel panel-default" id="panelEstudioslist" >
