@@ -528,3 +528,8 @@ label {
 .navbar-inverse .navbar-nav > li > h5 > small {
     color:#002452;
 }
+
+.navbar-inverse .navbar-nav>li>a {
+    color: #18375D;
+    font-size: large;
+}

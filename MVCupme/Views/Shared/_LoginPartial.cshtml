@@ -1,12 +1,43 @@
-﻿
-    <ul class="nav navbar-nav">
-    </ul>
+﻿@using Microsoft.AspNet.Identity
+@if (User.Identity.IsAuthenticated == true)
+{
+    using (Html.BeginForm("LogOff", "Account", FormMethod.Post, new { id = "logoutForm" }))
+    {
+        @Html.AntiForgeryToken()
+        <ul class="nav navbar-nav">
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+            <li>
+                <h5 style="max-width: 700px; text-align: right;">
+                    <small><b>Estudio:</b></small> <small id="tituloEstudio"></small><br>
+                    <small><b>Mineral:</b></small> <small id="tituloMineral"></small>
+                </h5>
+              </li>
+                <li class="dropdown">
+                    <a href="#" class="dropdown-toggle" data-toggle="dropdown"><i class="fa fa-user fa-1x"></i><b class="caret"></b></a>
+                    <ul class="dropdown-menu">
+                        <!--li id="PgnRegister">
+                        <a href="@Url.Action("Register", "Account")">
+                            <i class="glyphicon glyphicon-plus-sign"></i>  Registrar
+                        </a>
+                    </li --->
+                        <!----li>
+                        <a href="@Url.Action("ChangePassword", "Manage")">
+                            <i class="fa fa-gear"></i>  Contraseña
+                        </a>
+                    </ li-->
+                        <li></li>
+                        <li><a href="javascript:document.getElementById('logoutForm').submit()"><i class="fa fa-fw fa-power-off"></i>Cerrar sesión</a></li>
+                    </ul>
+                </li>
+        </ul>
+    }
+}
+else
+{
     <ul class="nav navbar-nav navbar-right">
-        <li>
-            <h5 style="max-width: 700px; text-align: right;">
-                <small><b>Estudio:</b></small> <small id="tituloEstudio"></small><br>
-                <small><b>Mineral:</b></small> <small id="tituloMineral"></small>
-            </h5>
-          </li>
+        <li id="PgnLogin">@Html.ActionLink("Iniciar sesión", "Login", "Account", routeValues: null, htmlAttributes: new { id = "loginLink" })</li>
     </ul>
+}
+  
 

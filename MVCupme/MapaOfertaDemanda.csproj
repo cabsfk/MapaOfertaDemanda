@@ -199,6 +199,11 @@
     <Compile Include="Models\ModelUsr.designer.cs">
       <DependentUpon>ModelUsr.cs</DependentUpon>
     </Compile>
+    <Compile Include="Models\ModelUsr2.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>ModelUsr.edmx</DependentUpon>
+    </Compile>
     <Compile Include="Models\MUB_GENERALES.cs">
       <DependentUpon>ModelUsr.tt</DependentUpon>
     </Compile>
