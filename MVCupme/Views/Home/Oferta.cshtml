@@ -1,0 +1,285 @@
+﻿@{
+    ViewBag.Title = "Pagina de inicio";
+}
+@using Microsoft.AspNet.Identity
+@if (User.Identity.IsAuthenticated == true)
+{
+
+    <script>
+        if (idUsuario != "") {
+            $.getJSON("./Home/UsrRolJson?idusuario=" + idUsuario, function (data) {
+                console.log('UsrRolJson');
+                console.log(data);
+                if (data.length != 0 && data[0].rol == 'ADMIN') {
+                    UsrOrgJson = data;
+                    $("#tituloOrganizacion").empty().append(UsrOrgJson[0].organizacion);
+                } else {
+                    document.getElementById('logoutForm').submit();
+                }
+            });
+        }
+    </script>
+<div id="PanelProyOferta">
+    <div class="panel panel-default" id="panelEstudioslist">
+        <div class="panel-body">
+            ESTUDIOS DIPOSNIBLES
+            <div class="input-group custom-search-form">
+                <span class="input-group-btn">
+                    <button class="btn btn-default" type="button" disabled>
+                        <span class="glyphicon glyphicon-search"></span>
+                    </button>
+                </span>
+                <input type="search" id="searchEstudio" value="" class="form-control" placeholder="Buscar Estudio...">
+                <span class="input-group-btn">
+                    <button class="btn btn-primary" type="button" id="limpiarBusquedaEstudios">
+                        <span class="glyphicon glyphicon-remove"></span>
+                    </button>
+                </span>
+            </div>
+            <br />
+            <div id="DivListaEstudios">
+                <div id="ListaEstudios">
+                    <ul class="chat"></ul>
+                </div>
+            </div>
+        </div>
+    </div>
+        <button type="button" class="btn btn-primary" id="BtnOcultarEstudios">
+            <span class="glyphicon glyphicon-chevron-left"></span>
+        </button>
+    
+</div>
+<div id="PanelOfertaMap">
+    <div id="map"></div>
+    <div id="info-pane" class="leaflet-bar"></div>
+    <div id="BtnMonstrarConven">
+        <button type="button" class="btn btn-primary btn-sm" id="MostrarConvenciones">
+            <span class="glyphicon glyphicon-align-left" aria-hidden="true"></span> <small id="textlegend">Ocultar</small>
+        </button>
+    </div>
+
+    <div class="panel" id="linea_tiempo">
+        <div class="btn-group" id="anios">
+
+        </div>
+    </div>
+    <div id="BtnMostrarPanelForm">
+        <button type="button" class="btn btn-primary" id="MostrarPanelForm">
+            <span class="glyphicon glyphicon-cog" aria-hidden="true"></span>
+        </button>
+    </div>
+
+    <div class="col-sm-2 col-md-2" id="panel_formulario" style="max-width:400px;min-width:350px;">
+        <div class="panel panel-primary">
+            <div class="panel-heading">
+                <h4 class="panel-title"><span class="glyphicon glyphicon-cog" aria-hidden="true"></span> Herramientas.
+                    <span class="pull-right " id="OcultarPanelForm">
+                        <span><i class="glyphicon glyphicon-remove"></i></span>
+                    </span>
+                </h4>
+            </div>
+            <div class="panel-body">
+                <div>
+
+                    <!-- Nav tabs -->
+                    <ul class="nav nav-tabs" role="tablist">
+                        <li role="presentation" class="active">
+                            <a href="#Filtro" aria-controls="Filtro" role="tab" data-toggle="tab">
+                                <span class="glyphicon glyphicon-filter  text-primary" data-toggle="tooltip" id="FiltroColor" data-placement="top" title="" data-original-title="Filtros"></span>
+                            </a>
+                        </li>
+                        <li role="presentation">
+                            <a href="#TabGrfDemanda" aria-controls="TabGrfDemanda" role="tab" data-toggle="tab">
+                                <span class="glyphicon glyphicon-tasks" data-toggle="tooltip" id="TabGrfDemandaColor" data-placement="top" title="" data-original-title="Grafica Demanda"></span>
+                            </a>
+                        </li>
+                        <li role="presentation">
+                            <a href="#Busqueda" aria-controls="Busqueda" role="tab" data-toggle="tab">
+                                <span class="glyphicon glyphicon-search" data-toggle="tooltip" id="BusquedaColor" data-placement="top" title="" data-original-title="Busqueda"></span>
+                            </a>
+                        </li>
+
+                    </ul>
+                    <!-- Tab panes -->
+                    <div class="tab-content">
+                        <div role="tabpanel" class="tab-pane active" id="Filtro">
+                            <div class="form-group hide">
+                                <label>Estudio: </label>
+                                <select class="form-control" id="selecEstudio"></select>
+                            </div>
+                            <div class="form-group">
+                                <label>Mineral: </label>
+                                <select class="form-control" id="selecMineral"></select>
+                            </div>
+                            <div class="form-group">
+                                <label>Restricciones Oferta: </label><br>
+                                <select class="form-control" id="SelctRestricciones" multiple="multiple">
+                                    <option value="TITULO_MINERIO">TITULOS  MINERIOS</option>
+                                    <option value="RESTRICCION_AMBIENTAL">AMBIENTALES</option>
+                                    <option value="RESTRICCION_SOCIAL">SOCIALES</option>
+                                </select>
+                            </div>
+                            <div class="form-group">
+                                <label>Variblables de Mapeo: </label>
+                                <select class="form-control" id="selecBubles">
+                                    <option value="" selected>Ninguna </option>
+                                </select>
+                            </div>
+                            <div class="panel panel-default">
+                                <div class="panel-body">
+                                    <label>Escala: </label>
+                                    <select class="form-control" id="selecEscala">
+                                        <option value="Departamento">Departamento</option>
+                                        <option value="Municipio">Ciudad</option>
+                                    </select>
+                                    <div class="input-group custom-search-form">
+                                        <span class="input-group-btn">
+                                            <button class="btn btn-default" type="button" disabled>
+                                                <span class="glyphicon glyphicon-search"></span>
+                                            </button>
+                                        </span>
+                                        <input type="search" id="searchCiudad" value="" class="form-control" placeholder="Buscar...">
+                                        <span class="input-group-btn">
+                                            <button class="btn btn-primary" type="button" id="BtnBusquedaLimpiar">
+                                                <span class="glyphicon glyphicon-remove"></span>
+                                            </button>
+                                        </span>
+                                    </div>
+                                    <br />
+                                    <div id="DivListaCiudad">
+                                        <div id="ListaCiudad"><ul class="chat"></ul></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div role="tabpanel" class="tab-pane" id="TabGrfDemanda">
+                            <div id="GraficaGlobal" style="width: 320px; height: 380px; overflow-y: scroll; overflow-x:hidden "></div>
+                        </div>
+                        <div role="tabpanel" class="tab-pane" id="Busqueda">
+                            <br>
+                            <form style="text-align: center;">
+                                <h5>Ingrese el nombre del municipio de interes</h5>
+                                <div class="input-group custom-search-form">
+                                    <input type="text" class="form-control" id="city" placeholder="Nombre Municipio">
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-default" type="button" id="BtnBusquedaMun" disabled>
+                                            <span class="glyphicon glyphicon-search"></span>
+                                        </button>
+                                    </span>
+                                    <span class="input-group-btn">
+                                        <button class="btn btn-primary" type="button" id="BtnLimpiarMun">
+                                            <span class="glyphicon glyphicon-trash"></span>
+                                        </button>
+                                    </span>
+                                </div><!-- /input-group -->
+                            </form>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="col-sm-2 col-md-2" id="panel_superDerecho" style="max-width:400px;min-width:360px;">
+        <div class="panel panel-primary">
+            <div class="panel-body">
+                <div class="pull-right">
+                    <button type="button" class="btn btn-primary btn-xs" id="closePanelDem">
+                        <span class="glyphicon glyphicon-remove" aria-hidden="true"></span>
+                    </button>
+                </div>
+                <ul class="nav nav-tabs" role="tablist">
+                    <li role="presentation" class="active"><a href="#BarDemanda" role="tab" data-toggle="tab">Demanda Proyectada</a></li>
+                </ul>
+                <div class="tab-content">
+                    <div role="tabpanel" class="tab-pane active" id="BarDemanda">
+                        <center>
+                            <div id="containerDemanda" style="min-width: 250px; height: 300px; margin: 0 auto"></div>
+                        </center>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="carousel-panel-generic" style="width:110px">
+        <div id="myCarousel" class="carousel slide">
+            <ol class="carousel-indicators">
+                <li data-target="#myCarousel" data-slide-to="0" class="active"></li>
+                <li data-target="#myCarousel" data-slide-to="1"></li>
+                <li data-target="#myCarousel" data-slide-to="2"></li>
+                <li data-target="#myCarousel" data-slide-to="3"></li>
+            </ol>
+            <!-- Carousel items -->
+            <div class="carousel-inner">
+                <div class="item active">
+                    <div class="row-fluid">
+                        <div class="col-sm-12 col-md-12" id="BaseESRIStreets" value="Streets">
+                            <a href="#" class="thumbnail">
+                                <img src="~/images/baselayers/calles.PNG" style="max-width:100%;">
+                                <div class="carousel-caption"><center><h6>ESRI Streets</h6></center></div>
+                            </a>
+                        </div>
+
+                    </div><!--/row-fluid-->
+                </div><!--/item-->
+                <div class="item ">
+                    <div class="row-fluid">
+                        <div class="col-sm-12 col-md-12" id="BaseESRISatellite" value="Imagery">
+                            <a href="#" class="thumbnail">
+                                <img src="~/images/baselayers/satelite.PNG" style="max-width:100%;">
+                                <div class="carousel-caption"><center><h6 style="color:rgba(255, 255, 255,1)">ESRI Satelite</h6></center></div>
+                            </a>
+                        </div>
+                    </div><!--/row-fluid-->
+                </div><!--/item-->
+                <div class="item">
+                    <div class="row-fluid">
+                        <div class="col-sm-12 col-md-12" id="BaseESRITopo" value="Topographic">
+                            <a href="#" class="thumbnail">
+                                <img src="~/images/baselayers/topografic.PNG" style="max-width:100%;">
+                                <div class="carousel-caption"><center><h6>ESRI Topographic</h6></center></div>
+                            </a>
+                        </div>
+
+                    </div>
+                </div>
+                <div class="item">
+                    <div class="row-fluid">
+                        <div class="col-sm-12 col-md-12" id="BaseOSM" value="OSM">
+                            <a href="#" class="thumbnail">
+                                <img src="~/images/baselayers/OSM.PNG" style="max-width:100%;">
+                                <div class="carousel-caption"><center><h6>OSM</h6></center></div>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <a class="left carousel-control" href="#myCarousel" role="button" data-slide="prev">
+                <span class="glyphicon glyphicon-chevron-left"></span>
+            </a>
+            <a class="right carousel-control" href="#myCarousel" role="button" data-slide="next">
+                <span class="glyphicon glyphicon-chevron-right"></span>
+            </a>
+        </div><!--/myCarousel-->
+    </div>
+    <div class='mouse-position panel'>
+        <div class="panel-body_xy">
+            <h6> <b id='mousemove'><b /></h6>
+        </div>
+    </div>
+</div>
+@Scripts.Render("~/bundles/appMapGlobalOferta")
+@Scripts.Render("~/bundles/appMapOferta")
+}
+else
+{
+    <script>
+        var direccion='@Url.Action("Login", "Account")';
+        
+        location.href = direccion;
+    </script>
+   
+}

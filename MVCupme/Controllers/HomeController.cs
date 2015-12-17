@@ -30,7 +30,7 @@ namespace MVCupme.Controllers
             return View();
         }
 
-        public ActionResult Validar()
+        public ActionResult Oferta()
         {
             ViewBag.Message = "Your application description page.";
 
@@ -68,7 +68,7 @@ namespace MVCupme.Controllers
 
             return View();
         }
-        public ActionResult Crear()
+        public ActionResult Demanda()
         {
             ViewBag.Message = "Pagina de mapa.";
 

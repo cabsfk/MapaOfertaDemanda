@@ -5,6 +5,8 @@
     {
         @Html.AntiForgeryToken()
         <ul class="nav navbar-nav">
+            <li id="PgnIndex">@Html.ActionLink("Oferta", "Index", "Home")</li>
+            <li id="PgnDemanda">@Html.ActionLink("Demanda", "Demanda", "Home")</li>
         </ul>
         <ul class="nav navbar-nav navbar-right">
             <li>

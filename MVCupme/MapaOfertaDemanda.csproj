@@ -348,6 +348,22 @@
     <Content Include="images\slider\bg2.png" />
     <Content Include="images\slider\bg3.jpg" />
     <Content Include="images\slider\bg4.jpg" />
+    <Content Include="Scripts\appDemanda\Ayuda.js" />
+    <Content Include="Scripts\appDemanda\BusquedaMun.js" />
+    <Content Include="Scripts\appDemanda\Globalconfig.js" />
+    <Content Include="Scripts\appDemanda\MainCargaDatos.js" />
+    <Content Include="Scripts\appDemanda\MainMap.js" />
+    <Content Include="Scripts\appDemanda\MainNav.js" />
+    <Content Include="Scripts\appDemanda\Notificaciones.js" />
+    <Content Include="Scripts\appDemanda\Usuarios.js" />
+    <Content Include="Scripts\appOferta\Ayuda.js" />
+    <Content Include="Scripts\appOferta\BusquedaMun.js" />
+    <Content Include="Scripts\appOferta\Globalconfig.js" />
+    <Content Include="Scripts\appOferta\MainCargaDatos.js" />
+    <Content Include="Scripts\appOferta\MainMap.js" />
+    <Content Include="Scripts\appOferta\MainNav.js" />
+    <Content Include="Scripts\appOferta\Notificaciones.js" />
+    <Content Include="Scripts\appOferta\Usuarios.js" />
     <Content Include="Scripts\app\Ayuda.js" />
     <Content Include="Scripts\app\BusquedaMun.js" />
     <Content Include="Scripts\app\Globalconfig.js" />
@@ -633,6 +649,8 @@
     <Content Include="Scripts\libs\esri-leaflet\esri-leaflet-src.js.map" />
     <Content Include="Scripts\libs\esri-leaflet\esri-leaflet.js.map" />
     <Content Include="Scripts\libs\esri-leaflet\README.md" />
+    <Content Include="Views\Home\Demanda.cshtml" />
+    <Content Include="Views\Home\Oferta.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="App_Data\" />

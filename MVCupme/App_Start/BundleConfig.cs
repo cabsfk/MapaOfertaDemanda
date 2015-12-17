@@ -70,6 +70,27 @@ namespace MVCupme
                 "~/Scripts/app/MainMap.js",
                 "~/Scripts/app/Ayuda.js"));
 
+            bundles.Add(new ScriptBundle("~/bundles/appMapGlobalOferta").Include(
+              "~/Scripts/appOferta/Globalconfig.js"));
+
+            bundles.Add(new ScriptBundle("~/bundles/appMapOferta").Include(
+                "~/Scripts/appOferta/BusquedaMun.js",
+               "~/Scripts/appOferta/MainCargaDatos.js",
+               "~/Scripts/appOferta/MainPie.js",
+                "~/Scripts/appOferta/MainMap.js",
+                "~/Scripts/appOferta/Ayuda.js"));
+
+
+            bundles.Add(new ScriptBundle("~/bundles/appMapGlobalDemanda").Include(
+              "~/Scripts/appDemanda/Globalconfig.js"));
+
+            bundles.Add(new ScriptBundle("~/bundles/appMapDemanda").Include(
+                "~/Scripts/appDemanda/BusquedaMun.js",
+               "~/Scripts/appDemanda/MainCargaDatos.js",
+               "~/Scripts/appDemanda/MainPie.js",
+                "~/Scripts/appDemanda/MainMap.js",
+                "~/Scripts/appDemanda/Ayuda.js"));
+
 
             bundles.Add(new StyleBundle("~/Content/css").Include(
                       "~/Scripts/libs/bootstrap-3.3.1/dist/css/bootstrap.min.css",

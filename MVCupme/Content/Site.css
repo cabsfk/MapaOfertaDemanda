@@ -533,3 +533,13 @@ label {
     color: #18375D;
     font-size: large;
 }
+
+#MostrarPanelForm {
+	position: absolute;
+	top: 10px;
+	left: 10px;
+	z-index:30;
+}
+.panel-body_xy{
+    padding: 1px;
+}
