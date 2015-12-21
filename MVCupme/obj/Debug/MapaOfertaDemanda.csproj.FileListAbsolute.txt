@@ -155,6 +155,6 @@ C:\BACKUPCODIGO\6. MapaOfertaDemanda\MapaOfertaDemanda\MVCupme\bin\es\Microsoft.
 C:\BACKUPCODIGO\6. MapaOfertaDemanda\MapaOfertaDemanda\MVCupme\bin\es\Microsoft.Owin.Security.Google.resources.dll
 C:\BACKUPCODIGO\6. MapaOfertaDemanda\MapaOfertaDemanda\MVCupme\bin\es\Microsoft.Owin.Security.Twitter.resources.dll
 C:\BACKUPCODIGO\6. MapaOfertaDemanda\MapaOfertaDemanda\MVCupme\bin\es\Microsoft.Owin.Security.MicrosoftAccount.resources.dll
+C:\BACKUPCODIGO\6. MapaOfertaDemanda\MapaOfertaDemanda\MVCupme\obj\Debug\MapaOfertaDemanda.csprojResolveAssemblyReference.cache
 C:\BACKUPCODIGO\6. MapaOfertaDemanda\MapaOfertaDemanda\MVCupme\obj\Debug\MVCupme.dll
 C:\BACKUPCODIGO\6. MapaOfertaDemanda\MapaOfertaDemanda\MVCupme\obj\Debug\MVCupme.pdb
-C:\BACKUPCODIGO\6. MapaOfertaDemanda\MapaOfertaDemanda\MVCupme\obj\Debug\MapaOfertaDemanda.csprojResolveAssemblyReference.cache
