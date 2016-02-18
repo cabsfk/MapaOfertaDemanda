@@ -10,7 +10,7 @@
             $.getJSON("./Home/UsrRolJson?idusuario=" + idUsuario, function (data) {
                 console.log('UsrRolJson');
                 console.log(data);
-                if (data.length != 0 && data[0].rol == 'ADMIN') {
+                if (data.length != 0) {
                     UsrOrgJson = data;
                     $("#tituloOrganizacion").empty().append(UsrOrgJson[0].organizacion);
                 } else {
