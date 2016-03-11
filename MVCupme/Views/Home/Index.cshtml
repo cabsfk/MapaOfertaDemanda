@@ -8,11 +8,14 @@
     <script>
         if (idUsuario != "") {
             $.getJSON("./Home/UsrRolJson?idusuario=" + idUsuario, function (data) {
-                console.log('UsrRolJson');
-                console.log(data);
+                
                 if (data.length != 0) {
-                    UsrOrgJson = data;
-                    $("#tituloOrganizacion").empty().append(UsrOrgJson[0].organizacion);
+                    if (data[0].rol == 'ADMIN' || data[0].rol == 'VALIDADOR') {
+                        UsrOrgJson = data;
+                        $("#tituloOrganizacion").empty().append(UsrOrgJson[0].organizacion);
+                    } else {
+                        document.getElementById('logoutForm').submit();
+                    }
                 } else {
                     document.getElementById('logoutForm').submit();
                 }
@@ -126,6 +129,7 @@
                                         <option value="" selected>Ninguna </option>
                                     </select>
                                 </div>
+                                <label><input type="checkbox" name="upm" id="IdUPM"><b> Unidadades de Producción Minera</b></label>
                                 <div class="panel panel-default">
                                     <div class="panel-body">
                                         <label>Escala: </label>
@@ -152,7 +156,7 @@
                                         </div>
                                     </div>
                                 </div>
-                            </div>
+</div>
                             <div role="tabpanel" class="tab-pane" id="TabGrfDemanda">
                                 <div id="GraficaGlobal" style="width: 320px; height: 380px; overflow-y: scroll; overflow-x:hidden "></div>
                             </div>

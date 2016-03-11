@@ -30,6 +30,10 @@ var glo = {
     lyrMate: '',
     lyrOferta: '',
     lyrBaseMunDpto:'',
+    IconUPM:{ 
+        icon: L.AwesomeMarkers.icon({ icon: 'cog', prefix: 'fa', markerColor: 'cadetblue' }), 
+        riseOnHover: true 
+    },
     extend: {
         "type": "FeatureCollection",
         "features": [
@@ -54,7 +58,8 @@ var glo = {
     listEstudioAnio: "",
     jsonMun: "",
     jsonMunFil: "",
-    jsonDto:"",
+    jsonDto: "",
+    jsonUPM: "",
     layerStyle: "",
     UniMate: "",
     maxDataCircle: '',
@@ -137,8 +142,22 @@ var glo = {
     bubleMax:[],
     uniBuble:'',
     uniNombre: '',
-    idEstudioIni:''
+    idEstudioIni: '',
+    markersUPM: L.markerClusterGroup({
+        disableClusteringAtZoom: 13,
+        maxClusterRadius: 60,
+        iconCreateFunction: function (cluster) {
+            var count = cluster.getChildCount();
+            var digits = (count + '').length;
+            return new L.DivIcon({
+                html: count,
+                className: 'cluster digits-' + digits,
+                iconSize: null
+            });
+        }
+    })
 }
+
 
 /***********************************
  // CONFIGURACION DE MAPA
@@ -351,6 +370,8 @@ $(function () {
 });
 
 
+
+
 $('#date_ini').datetimepicker({
     format: 'DD/MM/YYYY',
     locale: 'es',
@@ -449,7 +470,7 @@ query_Estudio.where("1='1'").returnGeometry(false).run(function (error, featureC
                                     + '</h6>' +
                         '</div>' +
                     '</li>';
-        console.log(glo.arrayHtmlEst[value.properties.ID_ESTUDIO]);
+        //console.log(glo.arrayHtmlEst[value.properties.ID_ESTUDIO]);
         active = '';
     });
     

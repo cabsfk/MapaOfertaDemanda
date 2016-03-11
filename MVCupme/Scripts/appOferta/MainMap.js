@@ -9,7 +9,7 @@ function getParametroFilter() {
         filterOferta = turf.remove(filterOferta, value, 1);
     });
     //console.log(filterOferta);
-
+    getLayerUPM(parseInt($("#selecEstudio").val()), parseInt($("#selecMineral").val()));
  
     if (filterOferta.features.length>0) {
         addOferta(filterOferta);
@@ -27,7 +27,8 @@ $("#selecMineral").change(function () {
 });
 
 $("#selecEscala").change(function () {
-    getParametroFilter();    
+    getParametroFilter();
+
 });
 
 function selecEstudiochange() {
@@ -225,7 +226,7 @@ function getIDMunDpt(filterOferta) {
     var idMun = [],idDepto=[],idMunDpto=[];
     //console.log(filterOferta);
     $.each(filterOferta.features, function (index, value) {
-        console.log(value.properties.DPTOMUN);
+       // console.log(value.properties.DPTOMUN);
         if (value.properties.DPTOMUN !== undefined) {
             value.properties.ID_DEPARTAMENTO = value.properties.DPTOMUN.substr(0, 2);
             value.properties.ID_MUNICIPIO = value.properties.DPTOMUN.substr(2, 3);

@@ -176,7 +176,7 @@ function CargaOfertaDemanda() {
                 }
                 
 
-                console.log(glo.Materiales);
+                
                 $('#selecMineral').empty();
                 $("#selecMineral").append('<option value="' + glo.Materiales[0] + '" selected>' + glo.textMineral[glo.Materiales[0]] + '</option>');
                 $('#tituloMineral').empty().append(glo.textMineral[glo.Materiales[0]]);
@@ -199,7 +199,8 @@ function CargaOfertaDemanda() {
                     VerLegend();
                     $('#LegendDemanda').hide();
                     waitingDialog.hide();
-               });
+                });
+                getLayerUPM(Estudio, glo.Materiales[0]);
             } else {
                 $('#infoOferta').empty().append('No hay datos de OFERTA');
                 waitingDialog.hide();
@@ -207,6 +208,54 @@ function CargaOfertaDemanda() {
            
         });
     
+}
+function getLayerUPM(Estudio,material){
+    var queryUPM = L.esri.Tasks.query({
+        url: config.dominio + config.urlHostDataMA + 'MapServer/' + config.EP_OFERTA
+    });
+    //
+    queryUPM.where("1='1' and FK_ID_ESTUDIO=" + Estudio + ' and FK_ID_MINERAL=' + material).run(function (error, geojson) {
+        var lyrUPM = L.geoJson(geojson, {
+            pointToLayer: function (feature, latlng) {
+                var upm;
+                upm = L.marker(latlng, glo.IconUPM).bindLabel(feature.properties.NOMBRE_UPM, { noHide: false, offset: [20, -45] });
+                htmlpopup =
+                 '<div class="panel panel-primary">' +
+                     '<div class="panel-heading">Unidad de Producción Minera</div>' +
+                         '<div class="popupstyle">' +
+                             '<button class="btn btn-primary pull-right btn-xs " data-toggle="tooltip" data-placement="left" title="Acercar" type="button" type="button" onclick="zoomCP(\'' + latlng.lng + '\',\'' + latlng.lat + '\')">' +
+                                 '<span class="glyphicon glyphicon-zoom-in" aria-hidden="true"></span>' +
+                             '</button>' +
+                             '<h5><strong  class="primary-font">' + feature.properties.NOMBRE_UPM + '</strong><br>' +
+                             //+ feature.properties.MPIO_CNMBR + ', ' + feature.properties.DPTO_CNMBR + '.<hr>' +
+                             
+                             '<small>Mineral:</small> ' + glo.textMineral[feature.properties.FK_ID_MINERAL] + '<br>' +
+                             '<small>Estudio:</small> ' + glo.listEstudio[feature.properties.FK_ID_ESTUDIO] + '<br>' +
+                             '<small>Peajes:</small> ' +numeral(feature.properties.NUMERO_PEAJES).format('0,0') + '<br>' +
+                             '<small>NUmero de Vehiculos:</small> ' + numeral(feature.properties.NUMERO_VEHICULOS).format('0,0') + ' <br>' +
+                             '<small>Numero Empleados:</small> ' + numeral(feature.properties.NUMERO_EMPLEADOS).format('0,0') + ' <br>' +
+                             '<small>Empleados Hombres :</small> ' + numeral(feature.properties.NUMERO_EMPLEADOS_HOMBRES).format('0,0') + '<br>' +
+                             '<small>Empleados Mujeres:</small> ' + numeral(feature.properties.NUMERO_EMPLEADOS_MUJERES).format('0,0') + ' <br>' +
+                             '<small>Costo de Produccion [$/'+glo.UniMate+']: </small> ' + numeral(feature.properties.COSTO_PRODUCCION).format('0,0') + ' <br>' +
+                             '<small>Area Intervenida:</small> ' + numeral(feature.properties.AREA_INTERVENIDA).format('0,0') + '<br>' +
+                             '<small>Consumo de Agua:</small> ' + numeral(feature.properties.CONSUMO_AGUA ).format('0,0') + '<br>' +
+                             '<small>Consumo de Energia:</small> ' + numeral(feature.properties.CONSUMO_ENERGIA).format('0,0') + '<br>' +
+                             '<small>Produccion Actual [' + glo.UniMate + ']: </small> ' + numeral(feature.properties.PRODUCCION_ACTUAL).format('0,0') + '<br>' +
+                             '<small>Capacidad Instalada:</small> ' + numeral(feature.properties.CAPACIDAD_INSTALADA).format('0,0') + '<br>' +
+                             '<small>Precio de Venta [$/' + glo.UniMate + ']: </small>' + numeral(feature.properties.PRECIO_VENTA).format('0,0') + '<br>' +
+                             '<small>Titulo Minero:</small> ' + numeral(feature.properties.TITULO_MINERIO).format('0,0') + '<br>' +
+                             '<small>Restriccion Ambiental:</small> ' + numeral(feature.properties.RESTRICCION_AMBIENTAL).format('0,0') + '<br>' +
+                             '<small>Restriccion Social:</small> ' + numeral(feature.properties.RESTRICCION_SOCIAL).format('0,0') + '<br>' +
+                         '</div>' +
+                     '</div>' +
+                 '</div>';
+                upm.bindPopup(htmlpopup);
+                return upm;
+            }
+        });
+        glo.markersUPM.clearLayers();
+        glo.markersUPM.addLayer(lyrUPM);
+    });
 }
 
 
@@ -247,6 +296,7 @@ function getDeptoSimp() {
             
             styleEstudio(glo.idEstudioIni);           
             CargaOfertaDemanda();
+            
         });
     });
     var queryDeptSimpli = L.esri.Tasks.query({
@@ -259,8 +309,16 @@ function getDeptoSimp() {
         glo.jsonDto = geojson;
 
     });
+    
 }
     
+$("#IdUPM").on("click", function () {
+    if ($("#IdUPM").is(':checked')) {
+        map.addLayer(glo.markersUPM);
+    } else {
+        map.removeLayer(glo.markersUPM);
+    }
+});
 $('#limpiarBusquedaEstudios').click(function () {
     $('#searchEstudio').focus().val('');
     
